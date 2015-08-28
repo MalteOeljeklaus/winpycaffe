@@ -166,6 +166,13 @@ def pxEval_maximizeFMeasure(totalPosNum, totalNegNum, totalFN, totalFP, thresh =
         BestThresh= thresh[index]
         prob_eval_scores['BestThresh'] = BestThresh
 
+
+    # jaccard index / intersection over union as in
+    # Cogswell, M., Lin, X., Purushwalkam, S., & Batra, D. (2014). Combining the best of
+    # graphical models and convnets for semantic segmentation. arXiv preprint arXiv:1412.4313.
+
+    prob_eval_scores['iou'] = TP / (TP + FP + FN)
+    
     #return a dict
     return prob_eval_scores
 

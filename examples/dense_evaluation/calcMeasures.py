@@ -97,7 +97,7 @@ for (idx_, in_) in enumerate(inputs):
 for i in range(0,12):
     out = pxEval_maximizeFMeasure(totalPosNum[i,:], totalNegNum[i,:], totalFN[i,:], totalFP[i,:], thresh)
     print 'Klasse: ' + label_name[i] +'\t',
-    for property in ['REC_wp', 'MaxF']:
+    for property in ['REC_wp', 'MaxF','iou']:
         print '%s: %4.2f \t' %(property, out[property]*100,),
     print ' '
 
