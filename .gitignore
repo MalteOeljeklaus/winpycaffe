@@ -70,12 +70,10 @@ models/*
 
 # build, distribute, and bins (+ python proto bindings)
 build/*
-!build/MSVC/MainBuilder.sln
-!build/MSVC/MainBuilder.vcxproj
-!build/MSVCmex/matcaffe.sln
-!build/MSVCmex/matcaffe.vcxproj
-!build/MSVCpy/Python.sln
-!build/MSVCpy/pycaffe.vcxproj
+!build/caffe.sln
+!build/commandline.vcxproj
+!build/matlab.vcxproj
+!build/python.vcxproj
 .build_debug/*
 .build_release/*
 3rdparty/*
