@@ -2162,10 +2162,10 @@ layer {
 #  top: "prob"
 #}
 layer {
-  name: "score-11"
+  name: "smallscore-11-32stride"
   type: "Convolution"
   bottom: "loss3/classifier"
-  top: "score-11"
+  top: "smallscore-11-32stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2191,20 +2191,24 @@ layer {
 layer {
   name: "upsample"
   type: "Deconvolution"
-  bottom: "score-11"
-  top: "bigscore"
+  bottom: "smallscore-11-32stride"
+  top: "bigscore-11-32stride"
   param {
-    lr_mult: 1
+    lr_mult: 0
+    decay_mult: 0
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
+    decay_mult: 0
   }
   convolution_param {
-    num_output: 1
-    kernel_size: 61
+    num_output: 11
+    kernel_size: 63
 #    group: 32
     stride: 32
+	weight_filler: { type: "bilinear" }
+	bias_term: false
   }
 }
-layer { type: 'Crop' name: 'score' top: 'score'
-  bottom: 'bigscore' bottom: 'data' }
+layer { type: 'Crop' name: 'crop_fused' top: 'score'
+  bottom: 'bigscore-11-32stride' bottom: 'data' }

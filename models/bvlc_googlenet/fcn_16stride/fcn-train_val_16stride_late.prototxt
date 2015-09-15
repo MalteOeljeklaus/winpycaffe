@@ -13,7 +13,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_train-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -31,7 +31,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_test-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -44,7 +44,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_train-gt-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -57,7 +57,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_test-gt-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -2219,10 +2219,10 @@ layer {
 #  top: "prob"
 #}
 layer {
-  name: "score-11"
+  name: "smallscore-11-32stride"
   type: "Convolution"
   bottom: "loss3/classifier"
-  top: "score-11"
+  top: "smallscore-11-32stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2248,8 +2248,8 @@ layer {
 layer {
   name: "upsample"
   type: "Deconvolution"
-  bottom: "score-11"
-  top: "bigscore-new"
+  bottom: "smallscore-11-32stride"
+  top: "bigscore-11-32stride"
   param {
     lr_mult: 1
   }
@@ -2261,17 +2261,19 @@ layer {
     kernel_size: 3
 #    group: 32
     stride: 2
+	weight_filler: { type: "bilinear" }
+	bias_term: false
   }
 }
 
 # add new 16 stride path starting after pool3
 
 layer {
-  name: "score-11-pool3"
+  name: "smallscore-11-16stride"
   type: "Convolution"
   bottom: "inception_4e/output"
 #  bottom: "pool3/3x3_s2"
-  top: "score-11-pool3"
+  top: "smallscore-11-16stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2285,52 +2287,59 @@ layer {
     kernel_size: 1
     engine: CAFFE
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "constant"
+      std: 0
     }
     bias_filler {
       type: "constant"
-      value: 1
+      value: 0
     }
   }
 }
  
 layer {
 	type: 'Crop'
-	name: 'crop'
-	bottom: 'score-11-pool3'
-	bottom: 'bigscore-new'
-	top: 'score-11-pool3_cropped'
+	name: 'crop_16stride'
+	bottom: 'smallscore-11-16stride'
+	bottom: 'bigscore-11-32stride'
+	top: 'smallscore-11-16stride_cropped'
 }
 
 layer {
-  name: "fuse"
+  name: "fuse-32_16"
   type: "Eltwise"
-  bottom: "bigscore-new"
-  bottom: "score-11-pool3_cropped"
-  top: "score-fused"
+  bottom: "bigscore-11-32stride"
+  bottom: "smallscore-11-16stride_cropped"
+  top: "smallscore-11-fused_32_16"
   eltwise_param {
     operation: SUM
   }
 }
 
 layer {
-  name: "upsample-fused"
+  name: "upsample-fused_32_16"
   type: "Deconvolution"
-  bottom: "score-fused"
-  top: "bigscore2"
+  bottom: "smallscore-11-fused_32_16"
+  top: "bigscore-11-fused_32_16"
   param {
-    lr_mult: 1
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
   convolution_param {
     num_output: 11
     bias_term: false
     kernel_size: 29
     stride: 16
+	weight_filler: { type: "bilinear" }
+	bias_term: false
   }
 }
 
-layer { type: 'Crop' name: 'crop' bottom: 'bigscore2' bottom: 'data' top: 'score' }
+layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-11-fused_32_16' bottom: 'data' top: 'score' }
 
 layer {
   name: "prob"

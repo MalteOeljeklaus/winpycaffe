@@ -13,7 +13,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_train-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -31,7 +31,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_test-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -44,7 +44,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_train-gt-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -57,7 +57,7 @@ layer {
   }
   data_param {
     source: "D:/camvid_test-gt-lmdb"
-    batch_size: 3
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -2234,6 +2234,8 @@ layer {
     kernel_size: 3
 #    group: 32
     stride: 2
+	weight_filler: { type: "bilinear" }
+	bias_term: false
   }
 }
 
@@ -2258,12 +2260,12 @@ layer {
     kernel_size: 1
     engine: CAFFE
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "constant"
+      std: 0
     }
     bias_filler {
       type: "constant"
-      value: 1
+      value: 0
     }
   }
 }
@@ -2300,6 +2302,8 @@ layer {
     bias_term: false
     kernel_size: 3
     stride: 2
+	weight_filler: { type: "bilinear" }
+	bias_term: false
   }
 }
 
@@ -2323,12 +2327,12 @@ layer {
     kernel_size: 1
     engine: CAFFE
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "constant"
+      std: 0
     }
     bias_filler {
       type: "constant"
-      value: 1
+      value: 0
     }
   }
 }
@@ -2353,13 +2357,20 @@ layer {
   bottom: "smallscore-11-fused_32_16_8"
   top: "bigscore-11-fused_32_16_8"
   param {
-    lr_mult: 1
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
   }
   convolution_param {
     num_output: 11
     bias_term: false
     kernel_size: 13
     stride: 8
+	weight_filler: { type: "bilinear" }
+	bias_term: false
   }
 }
 
