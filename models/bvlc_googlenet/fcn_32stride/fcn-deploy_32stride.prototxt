@@ -2189,14 +2189,10 @@ layer {
   }
 }
 layer {
-  name: "upsample"
+  name: "upsample_constant"
   type: "Deconvolution"
   bottom: "smallscore-11-32stride"
   top: "bigscore-11-32stride"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   param {
     lr_mult: 0
     decay_mult: 0

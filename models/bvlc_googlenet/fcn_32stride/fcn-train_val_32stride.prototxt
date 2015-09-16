@@ -12,8 +12,8 @@ layer {
     mean_value: 122.67892
   }
   data_param {
-    source: "D:/camvid-lmdb"
-    batch_size: 4
+    source: "../data/CamVid/camvid_train-lmdb"
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -30,8 +30,8 @@ layer {
     mean_value: 122.67892
   }
   data_param {
-    source: "C:/Users/Oeljeklaus/Desktop/winpycaffe/examples/fine_tune_alexnet_fcn/camseq01-lmdb"
-    batch_size: 4
+    source: "../data/CamVid/camvid_test-lmdb"
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -43,8 +43,8 @@ layer {
     phase: TRAIN
   }
   data_param {
-    source: "D:/camvid-gt-lmdb"
-    batch_size: 4
+    source: "../data/CamVid/camvid_train-gt-lmdb"
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -56,8 +56,8 @@ layer {
     phase: TEST
   }
   data_param {
-    source: "C:/Users/Oeljeklaus/Desktop/winpycaffe/examples/fine_tune_alexnet_fcn/camseq01_gt-lmdb"
-    batch_size: 4
+    source: "../data/CamVid/camvid_test-gt-lmdb"
+    batch_size: 5
     backend: LMDB
   }
 }
@@ -2246,14 +2246,10 @@ layer {
   }
 }
 layer {
-  name: "upsample"
+  name: "upsample_constant"
   type: "Deconvolution"
   bottom: "smallscore-11-32stride"
   top: "bigscore-11-32stride"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   param {
     lr_mult: 0
     decay_mult: 0

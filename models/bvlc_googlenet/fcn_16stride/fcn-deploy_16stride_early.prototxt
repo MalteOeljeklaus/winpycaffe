@@ -2195,9 +2195,11 @@ layer {
   top: "bigscore-11-32stride"
   param {
     lr_mult: 1
+    decay_mult: 1
   }
   param {
     lr_mult: 2
+    decay_mult: 0
   }
   convolution_param {
     num_output: 11
@@ -2205,7 +2207,11 @@ layer {
 #    group: 32
     stride: 2
 	weight_filler: { type: "bilinear" }
-	bias_term: false
+	bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
   }
 }
 
@@ -2260,14 +2266,10 @@ layer {
 }
 
 layer {
-  name: "upsample-fused_32_16"
+  name: "upsample-fused_32_16_constant"
   type: "Deconvolution"
   bottom: "smallscore-11-fused_32_16"
   top: "bigscore-11-fused_32_16"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   param {
     lr_mult: 0
     decay_mult: 0
@@ -2278,7 +2280,6 @@ layer {
     kernel_size: 29
     stride: 16
 	weight_filler: { type: "bilinear" }
-	bias_term: false
   }
 }
 
