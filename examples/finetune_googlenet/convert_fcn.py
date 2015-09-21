@@ -9,7 +9,7 @@ import numpy as np
 # make a bilinear interpolation kernel
 # credit @longjon
 def upsample_filt(size):
-    factor = (size + 1) // 2
+    factor = np.float32((size + 1) // 2)
     if size % 2 == 1:
         center = factor - 1
     else:
@@ -31,16 +31,19 @@ def interp_surgery(net, layers):
             raise
         filt = upsample_filt(h)
         net.params[l][0].data[range(m), range(k), :, :] = filt
+#        net.params[l][0].data[range(m), range(k), :, :] = filt
 
 
 def convert_fcn(original_deploy, fcn_deploy, original_params, fcn_params, original_model_file, fcn_model_file_output):
     # Load the original network and extract the fully connected layers' parameters.
     net = caffe.Net(original_deploy, original_model_file, caffe.TEST)
-    # fc_params = {name: (weights, biases)}
-    fc_params = {pr: (net.params[pr][0].data, net.params[pr][1].data) for pr in original_params}
     
     # Load the fully convolutional network to transplant the parameters.
     net_full_conv = caffe.Net(fcn_deploy, original_model_file, caffe.TEST)
+
+    # fc_params = {name: (weights, biases)}
+    fc_params = {pr: (net.params[pr][0].data, net.params[pr][1].data) for pr in original_params}
+ 
     # conv_params = {name: (weights, biases)}
     conv_params = {pr: (net_full_conv.params[pr][0].data, net_full_conv.params[pr][1].data) for pr in fcn_params}
     
@@ -55,23 +58,26 @@ def convert_fcn(original_deploy, fcn_deploy, original_params, fcn_params, origin
     net_full_conv.save(fcn_model_file_output)
 
 
+convert_fcn('D:/Stick/1_32s_IN/models/bvlc_googlenet/fcn_32stride/fcn-deploy_32stride.prototxt','D:/Stick/1_32s_IN/models/bvlc_googlenet/fcn_16stride/fcn-deploy_16stride_early.prototxt',
+            [],[],
+            'D:/Stick/1_32s_IN/bin/snapshot/fcn-train_val_32stride__iter_1.caffemodel','D:/Stick/1_early_16s_32s/bin/snapshot/fcn-train_val_16stride_iter_1_init.caffemodel')
 
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_early.prototxt',
-            ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_8stride/fcn-googlenet_8stride_early.caffemodel')
-
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_late.prototxt',
-            ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_8stride/fcn-googlenet_8stride_late.caffemodel')
-
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_16stride/fcn-deploy_16stride_early.prototxt',
-            ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_16stride/fcn-googlenet_16stride_early.caffemodel')
-
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_16stride/fcn-deploy_16stride_late.prototxt',
-            ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_16stride/fcn-googlenet_16stride_late.caffemodel')
-
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_32stride/fcn-deploy_32stride.prototxt',
-            ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_32stride/fcn-googlenet_32stride.caffemodel')
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_early.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_8stride/fcn-googlenet_8stride_early.caffemodel')
+#
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_late.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_8stride/fcn-googlenet_8stride_late.caffemodel')
+#
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_16stride/fcn-deploy_16stride_early.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_16stride/fcn-googlenet_16stride_early.caffemodel')
+#
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_16stride/fcn-deploy_16stride_late.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_16stride/fcn-googlenet_16stride_late.caffemodel')
+#
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/bvlc_googlenet/fcn_32stride/fcn-deploy_32stride.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/bvlc_googlenet/fcn_32stride/fcn-googlenet_32stride.caffemodel')

@@ -13,7 +13,7 @@ layer {
   }
   data_param {
     source: "../data/CamVid/camvid_train-lmdb"
-    batch_size: 5
+    batch_size: 4
     backend: LMDB
   }
 }
@@ -31,7 +31,7 @@ layer {
   }
   data_param {
     source: "../data/CamVid/camvid_test-lmdb"
-    batch_size: 5
+    batch_size: 1
     backend: LMDB
   }
 }
@@ -44,7 +44,7 @@ layer {
   }
   data_param {
     source: "../data/CamVid/camvid_train-gt-lmdb"
-    batch_size: 5
+    batch_size: 4
     backend: LMDB
   }
 }
@@ -57,7 +57,7 @@ layer {
   }
   data_param {
     source: "../data/CamVid/camvid_test-gt-lmdb"
-    batch_size: 5
+    batch_size: 1
     backend: LMDB
   }
 }
@@ -2259,7 +2259,6 @@ layer {
     kernel_size: 63
 #    group: 32
     stride: 32
-	weight_filler: { type: "bilinear" }
 	bias_term: false
   }
 }

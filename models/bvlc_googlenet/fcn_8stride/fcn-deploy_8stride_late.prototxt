@@ -2170,21 +2170,12 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-  }
   convolution_param {
     num_output: 11
     kernel_size: 3
 #    group: 32
     stride: 2
-	weight_filler: { type: "bilinear" }
-	bias_term: true
-    bias_filler {
-      type: "constant"
-      value: 0
-    }
+	bias_term: false
   }
 }
 
@@ -2247,20 +2238,11 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-  }
   convolution_param {
     num_output: 11
-    bias_term: true
+    bias_term: false
     kernel_size: 3
     stride: 2
-	weight_filler: { type: "bilinear" }
-    bias_filler {
-      type: "constant"
-      value: 0
-    }
   }
 }
 
@@ -2323,7 +2305,6 @@ layer {
     bias_term: false
     kernel_size: 13
     stride: 8
-	weight_filler: { type: "bilinear" }
   }
 }
 
