@@ -221,8 +221,8 @@ class ConvolutionLayer : public BaseConvolutionLayer<Dtype> {
 
   virtual inline const char* type() const { return "Convolution"; }
   virtual inline DiagonalAffineMap<Dtype> coord_map() {
-    return FilterMap<Dtype>(this->kernel_h_, this->kernel_w_, this->stride_h_,
-        this->stride_w_, this->pad_h_, this->pad_w_).inv();
+	  return FilterMap<Dtype>(this->kernel_shape_.height(), this->kernel_shape_.width(), this->stride_.height(),
+                              this->stride_.width(), this->pad_.height(), this->pad_.width()).inv();
   }
 
  protected:
@@ -259,8 +259,8 @@ class DeconvolutionLayer : public BaseConvolutionLayer<Dtype> {
       : BaseConvolutionLayer<Dtype>(param) {}
   virtual inline const char* type() const { return "Deconvolution"; }
   virtual inline DiagonalAffineMap<Dtype> coord_map() {
-    return FilterMap<Dtype>(this->kernel_h_, this->kernel_w_, this->stride_h_,
-        this->stride_w_, this->pad_h_, this->pad_w_);
+    return FilterMap<Dtype>(this->kernel_shape_.height(), this->kernel_shape_.width(), this->stride_.height(),
+                            this->stride_.width(), this->pad_.height(), this->pad_.width());
   }
 
  protected:

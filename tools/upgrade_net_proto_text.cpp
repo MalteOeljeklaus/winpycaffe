@@ -2,6 +2,10 @@
 // Usage:
 //    upgrade_net_proto_text v0_net_proto_file_in net_proto_file_out
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <cstring>
 #include <fstream>  // NOLINT(readability/streams)
 #include <iostream>  // NOLINT(readability/streams)
