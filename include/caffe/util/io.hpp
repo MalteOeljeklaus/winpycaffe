@@ -1,7 +1,11 @@
 #ifndef CAFFE_UTIL_IO_H_
 #define CAFFE_UTIL_IO_H_
 
+#ifdef _MSC_VER
+#include "wincaffe_misc.h"
+#else
 #include <unistd.h>
+#endif
 #include <string>
 
 #include "google/protobuf/message.h"

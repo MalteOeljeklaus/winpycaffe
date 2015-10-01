@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{FB8D5902-0AEC-4943-B5CF-2FF285EF0E4B}</ProjectGUID>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>python</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 7.5.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_caffe.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_caffe</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../3rdparty/include;../3rdparty/include/cuda;../src;../src/include;../include;../3rdparty/include/hdf5-1.8.15-win64-vs2013-shared;../3rdparty/include/pthread;../3rdparty/include/liblmdb;../3rdparty/include/openblas;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include;C:\Python27\include;C:\Python27\lib\site-packages\numpy\core\include;..\include;..\3rdparty\include;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release";pycaffe_EXPORTS;USE_CUDNN=1;USE_LMDB=1;USE_LEVELDB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\";pycaffe_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Python34\include;C:\Python34\lib\site-packages\numpy\core\include;C:\boost_1_55_0;..\python..\include;..\python..\3rdparty\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Python34\include;C:\Python34\lib\site-packages\numpy\core\include;C:\boost_1_55_0;..\python..\include;..\python..\3rdparty\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+      <Command>
+copy ..\3rdparty\bin\*.* ..\python\caffe
+copy Release\_caffe.dll ..\python\caffe\_caffe.pyd
+mkdir ..\python\caffe\proto
+echo.&gt;..\python\caffe\proto\__init__.py
+copy ..\src\caffe\proto\*.py ..\python\caffe\proto
+</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>set origin_dir=%cd%
+cd ../
+"./scripts/GeneratePB.bat"
+cd %origin_dir%</Command>
+    </PreBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_20,sm_20;compute_20,sm_21;compute_30,sm_30;compute_35,sm_35;compute_50,sm_50;</CodeGeneration>
+    </CudaCompile>
+    <Link>
+      <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>python27.lib;libwincaffe_misc.lib;lmdb.lib;gflags.lib;hdf5.lib;hdf5_cpp.lib;hdf5_f90cstub.lib;hdf5_fortran.lib;hdf5_hl.lib;hdf5_hl_cpp.lib;hdf5_hl_f90cstub.lib;hdf5_hl_fortran.lib;hdf5_tools.lib;libpthread.lib;opencv_core248.lib;opencv_highgui248.lib;opencv_imgproc248.lib;opencv_legacy248.lib;opencv_objdetect248.lib;libboost_date_time-vc120-mt-s-1_59.lib;boost_system-vc120-mt-1_59.lib;boost_python-vc120-mt-1_59.lib;shlwapi.lib;leveldb.lib;libopenblas.lib;cudnn.lib;cublas.lib;cublas_device.lib;curand.lib;cudart.lib;cuda.lib;libprotobuf.lib;libglog.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\3rdparty\lib;%CUDA_PATH%\lib\x64;C:\Python27\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>./MSVCpy/Release/_caffe.lib</ImportLibrary>
+      <ProgramDataBaseFile>./MSVCpy/Release/_caffe.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\pythonCMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule ../python/CMakeLists.txt</Message>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../python/CMakeLists.txt;..\pythonCMakeLists.txt;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeSystem.cmake.in;.\CMakeFiles\3.2.2\CMakeSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\GNU-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeFindBinUtils.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeClDeps.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCCompiler.cmake.in;.\CMakeFiles\3.2.2\CMakeCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\Windows-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\GNU-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeFindBinUtils.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeClDeps.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCXXCompiler.cmake.in;.\CMakeFiles\3.2.2\CMakeCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeGenericSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\Windows.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\WindowsPaths.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\Windows-MSVC.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeRCCompiler.cmake.in;.\CMakeFiles\3.2.2\CMakeRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeRCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeTestRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeTestCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCCompilerABI.c;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCCompiler.cmake.in;.\CMakeFiles\3.2.2\CMakeCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCXXInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Platform\Windows-MSVC.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Internal\FeatureTesting.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;.\CMakeFiles\feature_tests.cxx;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCXXCompiler.cmake.in;.\CMakeFiles\3.2.2\CMakeCXXCompiler.cmake;C:\Users\Oeljeklaus\Desktop\caffe_cnn\caffe_future_longjon_rev3639_win64_vs12_matlab2015a_maoe3004_2\CMakeScripts\FindNumPy.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\FindPythonInterp.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.2\Modules\FindBoost.cmake;..\pythonCMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\python\caffe\_caffe.cpp" />
+    <ClCompile Include="..\src\caffe\blob.cpp" />
+    <ClCompile Include="..\src\caffe\common.cpp" />
+    <ClCompile Include="..\src\caffe\data_reader.cpp" />
+    <ClCompile Include="..\src\caffe\data_transformer.cpp" />
+    <ClCompile Include="..\src\caffe\internal_thread.cpp" />
+    <ClCompile Include="..\src\caffe\layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\absval_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\accuracy_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\argmax_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\base_conv_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\base_data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\bnll_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\concat_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\contrastive_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\conv_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\cudnn_conv_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\cudnn_pooling_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\cudnn_relu_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\cudnn_sigmoid_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\cudnn_softmax_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\cudnn_tanh_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\deconv_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\dropout_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\dummy_data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\eltwise_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\embed_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\euclidean_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\exp_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\filter_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\flatten_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\hdf5_data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\hdf5_output_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\hinge_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\im2col_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\image_data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\infogain_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\inner_product_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\log_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\lrn_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\memory_data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\multinomial_logistic_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\mvn_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\neuron_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\pooling_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\power_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\prelu_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\reduction_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\relu_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\reshape_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\sigmoid_cross_entropy_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\sigmoid_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\silence_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\slice_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\softmax_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\softmax_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\split_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\spp_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\tanh_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\threshold_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\tile_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\window_data_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layer_factory.cpp" />
+    <ClCompile Include="..\src\caffe\net.cpp" />
+    <ClCompile Include="..\src\caffe\parallel.cpp" />
+    <ClCompile Include="..\src\caffe\proto\caffe.pb.cc" />
+    <ClCompile Include="..\src\caffe\solver.cpp" />
+    <ClCompile Include="..\src\caffe\syncedmem.cpp" />
+    <ClCompile Include="..\src\caffe\util\benchmark.cpp" />
+    <ClCompile Include="..\src\caffe\util\blocking_queue.cpp" />
+    <ClCompile Include="..\src\caffe\util\cudnn.cpp" />
+    <ClCompile Include="..\src\caffe\util\db.cpp" />
+    <ClCompile Include="..\src\caffe\util\db_leveldb.cpp" />
+    <ClCompile Include="..\src\caffe\util\db_lmdb.cpp" />
+    <ClCompile Include="..\src\caffe\util\hdf5.cpp" />
+    <ClCompile Include="..\src\caffe\util\im2col.cpp" />
+    <ClCompile Include="..\src\caffe\util\insert_splits.cpp" />
+    <ClCompile Include="..\src\caffe\util\io.cpp" />
+    <ClCompile Include="..\src\caffe\util\math_functions.cpp" />
+    <ClCompile Include="..\src\caffe\util\signal_handler.cpp" />
+    <ClCompile Include="..\src\caffe\util\upgrade_proto.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\caffe\proto\caffe.pb.h" />
+    <ClInclude Include="..\src\include\opencvlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\src\caffe\layers\absval_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\base_data_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\bnll_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\concat_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\contrastive_loss_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\conv_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\cudnn_conv_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\cudnn_pooling_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\cudnn_relu_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\cudnn_sigmoid_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\cudnn_softmax_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\cudnn_tanh_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\deconv_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\dropout_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\eltwise_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\embed_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\euclidean_loss_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\exp_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\filter_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\hdf5_data_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\hdf5_output_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\im2col_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\inner_product_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\log_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\lrn_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\mvn_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\pooling_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\power_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\prelu_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\reduction_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\relu_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\sigmoid_cross_entropy_loss_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\sigmoid_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\silence_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\slice_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\softmax_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\softmax_loss_layer.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\split_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\tanh_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\threshold_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\tile_layer.cu" />
+    <CudaCompile Include="..\src\caffe\util\im2col.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\caffe\util\math_functions.cu">
+      <FileType>CudaCompile</FileType>
+    </CudaCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 7.5.targets" />
+  </ImportGroup>
+</Project>

@@ -14,7 +14,11 @@
       << cudnnGetErrorString(status); \
   } while (0)
 
+#if _MSC_VER && CUDNN_VERSION>=2000
+inline const char * CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {	// credits to Freerk Venhuizen
+#else
 inline const char* cudnnGetErrorString(cudnnStatus_t status) {
+#endif
   switch (status) {
     case CUDNN_STATUS_SUCCESS:
       return "CUDNN_STATUS_SUCCESS";
