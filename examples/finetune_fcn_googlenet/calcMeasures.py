@@ -7,6 +7,7 @@ import caffe
 #import matplotlib.pyplot as plt
 from helper import evalExp, pxEval_maximizeFMeasure
 #from sklearn.metrics import confusion_matrix
+from scipy import interpolate
 
 def calcClassMeasures(gt, prob, validArea, thresh):
 #    print prob.max()
@@ -21,6 +22,9 @@ label_colors = [(64,128,64),(192,0,128),(0,128,192),(0,128,64),(128,0,0),(64,0,1
 label_class = [255,255,0,255,1,2,255,255,3,4,255,255,255,255,255,255,5,6,255,7,8,9,255,255,255,255,10,255,255,255,255,255]
 label_name = ['Bicyclist','Building','Car\t','Column_Pole','Fence','Pedestrian','Road','Sidewalk','SignSymbol','Sky\t','Tree', 'Global']
 
+# scale factor of training dataset
+train_scale_factor=0.5
+
 #thresh = np.array(range(0,256))*47.0/255.0  # check your outputs to specify the threshold range
 thresh = np.array([0.5])  # check your outputs to specify the threshold range
 
@@ -32,10 +36,17 @@ f = open('camvid_list_test_gt.txt','r')
 inputs_gt = f.read().splitlines()
 f.close()
 
+caffe.set_mode_gpu()
+caffe.set_device(0)
+
+net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_early.prototxt', 'D:/CIW15_Experimente/4_early_8s_16s/snapshot/fcn-googlenet-8stride_early_iter_14000.caffemodel', caffe.TEST)
+
 #net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_early.prototxt', 'D:/CIW15_Experimente/4_early_8S_16S/snapshot/fcn-googlenet-8stride_early_iter_14000.caffemodel', caffe.TEST)
 #net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_late.prototxt', 'D:/CIW15_Experimente/4_late_8S_16S/snapshot/fcn-googlenet-8stride_late_iter_14000.caffemodel', caffe.TEST)
 #net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_early.prototxt', 'D:/CIW15_Experimente/2_early_8s_IN/snapshot/fcn-googlenet-8stride_early_iter_42000.caffemodel', caffe.TEST)
-net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_late.prototxt', 'D:/CIW15_Experimente/2_late_8s_IN/snapshot/fcn-googlenet-8stride_late_iter_42000.caffemodel', caffe.TEST)
+#net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_late_cc.prototxt', 'D:/CIW15_Experimente/0510_OUT/fcn-googlenet-8stride_late_cc__iter_95000.caffemodel', caffe.TEST)
+#net = caffe.Net('D:/CIW15_Experimente/models/bvlc_googlenet/fcn_8stride/fcn-deploy_8stride_late_cc.prototxt', 'D:/CIW15_Experimente/0510_OUT/fcn-googlenet-8stride_late_cc__iter_45000.caffemodel', caffe.TEST)
+#net = caffe.Net('D:/CIW15_Experimente/0610_OUT/fcn-deploy_8stride_late_cc2.prototxt', 'D:/CIW15_Experimente/0610_OUT/fcn-googlenet-8stride_late_cc__iter_45000.caffemodel', caffe.TEST)
 
 # shape for input (data blob is N x C x H x W), set data
 
@@ -50,6 +61,7 @@ for (idx_, in_) in enumerate(inputs):
 #    in_=inputs[idx_]
     gt_in_ = inputs_gt[idx_]
     im = Image.open(in_) # load image
+    im = im.resize((int(im.size[0]*train_scale_factor),int(im.size[1]*train_scale_factor)),Image.ANTIALIAS) # downsize for reduced memory usage
     im = np.array(im, dtype=np.float32)
     im = im[:,:,::-1]
     im -= np.array((104.00698793,116.66876762,122.67891434))
@@ -69,8 +81,21 @@ for (idx_, in_) in enumerate(inputs):
 #        if label_class[i]!=255:
 #            prob_max = np.max([prob_max, net.blobs['score'].data[0][label_class[i],:,:].max()])
 #    print prob_max
+    net_out_small = (net.blobs['score'].data[0]).astype(np.float32)
+#    net_interp_grid = np.meshgrid(np.linspace(0,net_out.shape[0]-1,net_out.shape[0]),np.linspace(0,net_out.shape[1]-1,net_out.shape[1]),np.linspace(0,net_out.shape[2]-1,net_out.shape[2]))
+    net_orig_grid = (np.linspace(0,net_out_small.shape[0]-1,net_out_small.shape[0]),np.linspace(0,net_out_small.shape[1]-1,net_out_small.shape[1]),np.linspace(0,net_out_small.shape[2]-1,net_out_small.shape[2]))
+    net_interp_grid = np.meshgrid(np.linspace(0,net_out_small.shape[0]-1,net_out_small.shape[0]),np.linspace(0,net_out_small.shape[1]-1,net_out_small.shape[1]/train_scale_factor),np.linspace(0,net_out_small.shape[2]-1,net_out_small.shape[2]/train_scale_factor))
+    net_interp_grid = np.vstack([net_interp_grid[0].ravel(),net_interp_grid[1].ravel(),net_interp_grid[2].ravel()])
+    
+#    net_interp_grid = (np.arange(0,net_out.shape[0],1.),np.arange(0,net_out.shape[1],train_scale_factor),np.arange(0,net_out.shape[2],train_scale_factor)) 
+    net_out = interpolate.RegularGridInterpolator(net_orig_grid,net_out_small)(net_interp_grid.transpose())
+    net_out = net_out.reshape(im.shape[0],net_out_small.shape[0],im.shape[1]).transpose((1,0,2))
+    #(np.arange(0,net_out.shape[0]-1,1),np.arange(0,net_out.shape[1]-1,train_scale_factor),np.arange(0,net_out.shape[2]-1,train_scale_factor)) 
+#    yadda
     for j in [i for i in range(0,len(label_class)) if label_class[i]!=255]:
-        FN, FP, posNum, negNum = calcClassMeasures(np.prod(np.equal(im,label_colors[j]),2),(net.blobs['score'].data[0].argmax(axis=0)==label_class[j]).astype(np.float32),tmp!=255,thresh)
+#        net_out = interpolate.interp2d(np.arange(0,net_out.shape[1],1),np.arange(0,net_out.shape[0],1),net_out)(np.arange(0,net_out.shape[1],train_scale_factor),np.arange(0,net_out.shape[0],train_scale_factor)) # upscale network output
+#        FN, FP, posNum, negNum = calcClassMeasures(np.prod(np.equal(im,label_colors[j]),2),net_out[j,:,:],tmp!=255,thresh)
+        FN, FP, posNum, negNum = calcClassMeasures(np.prod(np.equal(im,label_colors[j]),2),(net_out.argmax(axis=0)==label_class[j]).astype(np.float32),tmp!=255,thresh)
 #        FN, FP, posNum, negNum = calcClassMeasures(np.prod(np.equal(im,label_colors[j]),2),net.blobs['score'].data[0][label_class[j],:,:],tmp!=255,thresh)
         totalFP[label_class[j],:] += FP
         totalFN[label_class[j],:] += FN
@@ -78,7 +103,8 @@ for (idx_, in_) in enumerate(inputs):
         totalNegNum[label_class[j]] += negNum
         
     # calculate measures globally
-    FN, FP, posNum, negNum = calcClassMeasures(np.ones([im.shape[0],im.shape[1]]),(net.blobs['score'].data[0].argmax(axis=0)==tmp).astype(np.float32),tmp!=255,thresh)
+    FN, FP, posNum, negNum = calcClassMeasures(np.ones([im.shape[0],im.shape[1]]),(net_out.argmax(axis=0)==tmp).astype(np.float32),tmp!=255,thresh)
+#    FN, FP, posNum, negNum = calcClassMeasures(np.ones([im.shape[0],im.shape[1]]),(net.blobs['score'].data[0].argmax(axis=0)==tmp).astype(np.float32),tmp!=255,thresh)
     totalFP[11,:] += FP
     totalFN[11,:] += FN
     totalPosNum[11] += posNum
