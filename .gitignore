@@ -69,7 +69,11 @@ models/*
 *lmdb
 
 # build, distribute, and bins (+ python proto bindings)
-build
+build/*
+!build/caffe.sln
+!build/commandline.vcxproj
+!build/matlab.vcxproj
+!build/python.vcxproj
 .build_debug/*
 .build_release/*
 distribute/*
