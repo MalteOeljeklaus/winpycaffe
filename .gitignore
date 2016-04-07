@@ -76,7 +76,9 @@ build/*
 !build/python.vcxproj
 .build_debug/*
 .build_release/*
+3rdparty/*
 distribute/*
+bin/*
 *.testbin
 *.bin
 python/caffe/proto/

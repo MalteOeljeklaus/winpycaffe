@@ -6,6 +6,10 @@
 
 #include "caffe/util/signal_handler.h"
 
+#ifdef _MSC_VER
+#include "wincaffe_misc.h"
+#endif
+
 namespace {
   static volatile sig_atomic_t got_sigint = false;
   static volatile sig_atomic_t got_sighup = false;

@@ -1,6 +1,10 @@
 #ifndef CAFFE_UTIL_IO_H_
 #define CAFFE_UTIL_IO_H_
 
+#ifdef _MSC_VER
+#include "wincaffe_misc.h"
+#endif
+
 #include <boost/filesystem.hpp>
 #include <iomanip>
 #include <iostream>  // NOLINT(readability/streams)

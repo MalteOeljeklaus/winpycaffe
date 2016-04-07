@@ -5,6 +5,10 @@
 
 #include <string>
 
+#ifdef _MSC_VER
+#include "wincaffe_misc.h"
+#endif
+
 namespace caffe { namespace db {
 
 const size_t LMDB_MAP_SIZE = 1099511627776;  // 1 TB
