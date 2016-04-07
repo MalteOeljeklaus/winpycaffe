@@ -400,6 +400,7 @@ message LayerParameter {
   optional TanHParameter tanh_param = 127;
   optional ThresholdParameter threshold_param = 128;
   optional TileParameter tile_param = 138;
+  optional WeightedSoftmaxLossParameter softmaxloss_param = 200;
   optional WindowDataParameter window_data_param = 129;
 }
 
@@ -471,6 +472,13 @@ message AccuracyParameter {
 
   // If specified, ignore instances with the given label.
   optional int32 ignore_label = 3;
+}
+
+message WeightedSoftmaxLossParameter {
+  // specify the data source for loss_weights_
+  optional string weight_source = 16;
+  // will ignore pixels with this value when computing accuracy
+  repeated int32 ignore_label = 2;
 }
 
 message ArgMaxParameter {

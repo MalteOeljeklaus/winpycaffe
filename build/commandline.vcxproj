@@ -149,6 +149,7 @@ cd %origin_dir%</Command>
     <ClCompile Include="..\src\caffe\layers\slice_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\softmax_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\softmax_loss_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\softmax_weighted_loss_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\split_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\spp_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\tanh_layer.cpp" />
@@ -248,6 +249,7 @@ cd %origin_dir%</Command>
       <FileType>CudaCompile</FileType>
     </CudaCompile>
     <CudaCompile Include="..\src\caffe\layers\softmax_loss_layer.cu" />
+    <CudaCompile Include="..\src\caffe\layers\softmax_weighted_loss_layer.cu" />
     <CudaCompile Include="..\src\caffe\layers\split_layer.cu" />
     <CudaCompile Include="..\src\caffe\layers\tanh_layer.cu" />
     <CudaCompile Include="..\src\caffe\layers\threshold_layer.cu" />
