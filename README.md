@@ -2,6 +2,7 @@
 - PR #2016 for reduced memory usage
 - PR #3778 for crop layer flexibility / bugfix
 - windows port and build files for commandline, python and matlab interfaces
+- added SoftmaxWithWeightedLossLayer from DeepLab https://bitbucket.org/deeplab/deeplab-public/
 
 # Caffe
 
