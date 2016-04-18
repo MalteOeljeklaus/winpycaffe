@@ -12,8 +12,8 @@ layer {
     mean_value: 122.67892
   }
   data_param {
-    source: "../data/CamVid/camvid_train-lmdb"
-    batch_size: 3
+    source: "F:/cityscapes_train_55/cityscapes_55_train-lmdb"
+    batch_size: 1
     backend: LMDB
   }
 }
@@ -30,7 +30,7 @@ layer {
     mean_value: 122.67892
   }
   data_param {
-    source: "../data/CamVid/camvid_test-lmdb"
+    source: "F:/cityscapes_train_55/cityscapes_55_val-lmdb"
     batch_size: 1
     backend: LMDB
   }
@@ -43,8 +43,8 @@ layer {
     phase: TRAIN
   }
   data_param {
-    source: "../data/CamVid/camvid_train-gt-lmdb"
-    batch_size: 3
+    source: "F:/cityscapes_train_55/cityscapes_55_train-gt-lmdb"
+    batch_size: 1
     backend: LMDB
   }
 }
@@ -56,7 +56,7 @@ layer {
     phase: TEST
   }
   data_param {
-    source: "../data/CamVid/camvid_test-gt-lmdb"
+    source: "F:/cityscapes_train_55/cityscapes_55_val-gt-lmdb"
     batch_size: 1
     backend: LMDB
   }
@@ -2192,10 +2192,10 @@ layer {
 }
 
 layer {
-  name: "smallscore-11-32stride"
+  name: "smallscore-32stride"
   type: "Convolution"
   bottom: "loss3/classifier"
-  top: "smallscore-11-32stride"
+  top: "smallscore-32stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2222,8 +2222,8 @@ layer {
 layer {
   name: "upsample"
   type: "Deconvolution"
-  bottom: "smallscore-11-32stride"
-  top: "bigscore-11-32stride"
+  bottom: "smallscore-32stride"
+  top: "bigscore-32stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2240,11 +2240,10 @@ layer {
 # add new 16 stride path starting after pool3
 
 layer {
-  name: "smallscore-11-16stride"
+  name: "smallscore-16stride"
   type: "Convolution"
   bottom: "inception_4e/output"
-#  bottom: "pool3/3x3_s2"
-  top: "smallscore-11-16stride"
+  top: "smallscore-16stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2267,32 +2266,21 @@ layer {
     }
   }
 }
- 
+
 layer {
 	type: 'Crop'
 	name: 'crop-16stride'
-	bottom: 'smallscore-11-16stride'
-	bottom: 'bigscore-11-32stride'
-	top: 'smallscore-11-16stride_cropped'
+	bottom: 'bigscore-32stride'
+	bottom: 'smallscore-16stride'
+	top: 'bigscore-32stride_cropped'
 }
-
-#layer {
-#  name: "fuse-32_16"
-#  type: "Eltwise"
-#  bottom: "bigscore-11-32stride"
-#  bottom: "smallscore-11-16stride_cropped"
-#  top: "smallscore-11-fused_32_16"
-#  eltwise_param {
-#    operation: SUM
-#  }
-#}
 
 layer {
   name: "fuse-32_16"
   type: "Concat"
-  bottom: "bigscore-11-32stride"
-  bottom: "smallscore-11-16stride_cropped"
-  top: "smallscore-11-fused_32_16"
+  bottom: "bigscore-32stride_cropped"
+  bottom: "smallscore-16stride"
+  top: "smallscore-fused_32_16"
   concat_param {
     axis: 1
   }
@@ -2301,8 +2289,8 @@ layer {
 layer {
   name: "upsample-fused_32_16"
   type: "Deconvolution"
-  bottom: "smallscore-11-fused_32_16"
-  top: "bigscore-11-fused_32_16"
+  bottom: "smallscore-fused_32_16"
+  top: "bigscore-fused_32_16"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2318,11 +2306,10 @@ layer {
 # add 8 stride path starting after pool2
 
 layer {
-  name: "smallscore-11-8stride"
+  name: "smallscore-8stride"
   type: "Convolution"
-#  bottom: "pool2/3x3_s2"
   bottom: "inception_3b/output"
-  top: "smallscore-11-8stride"
+  top: "smallscore-8stride"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2346,26 +2333,20 @@ layer {
   }
 }
 
-layer { type: 'Crop' name: 'crop_8stride' bottom: 'smallscore-11-8stride' bottom: 'bigscore-11-fused_32_16'
-  top: 'smallscore-11-8stride_cropped' }
-
-#layer {
-#  name: "fuse-32_16_8"
-#  type: "Eltwise"
-#  bottom: "bigscore-11-fused_32_16"
-#  bottom: "smallscore-11-8stride_cropped"
-#  top: "smallscore-11-fused_32_16_8"
-#  eltwise_param {
-#    operation: SUM
-#  }
-#}
+layer {
+  type: 'Crop'
+  name: 'crop_8stride'
+  bottom: 'bigscore-fused_32_16'
+  bottom: 'smallscore-8stride'
+  top: 'bigscore-fused_32_16_cropped'
+}
 
 layer {
   name: "fuse-32_16_8"
   type: "Concat"
-  bottom: "bigscore-11-fused_32_16"
-  bottom: "smallscore-11-8stride_cropped"
-  top: "smallscore-11-fused_32_16_8"
+  bottom: "bigscore-fused_32_16_cropped"
+  bottom: "smallscore-8stride"
+  top: "smallscore-fused_32_16_8"
   concat_param {
     axis: 1
   }
@@ -2374,8 +2355,8 @@ layer {
 layer {
   name: "output-conv-32-16-8"
   type: "Convolution"
-  bottom: "smallscore-11-fused_32_16_8"
-  top: "smallscore-11-fused_conv_32_16_8"
+  bottom: "smallscore-fused_32_16_8"
+  top: "smallscore-19-fused_conv_32_16_8"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2385,7 +2366,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 11
+    num_output: 19
     kernel_size: 3
 	pad: 1
     engine: CAFFE
@@ -2403,21 +2384,21 @@ layer {
 layer {
   name: "upsample-fused_32_16_8_constant"
   type: "Deconvolution"
-  bottom: "smallscore-11-fused_conv_32_16_8"
-  top: "bigscore-11-fused_32_16_8"
+  bottom: "smallscore-19-fused_conv_32_16_8"
+  top: "bigscore-19-fused_32_16_8"
   param {
     lr_mult: 0
     decay_mult: 0
   }
   convolution_param {
-    num_output: 11
+    num_output: 19
     bias_term: false
-    kernel_size: 13
+    kernel_size: 14
     stride: 8
   }
 }
 
-layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-11-fused_32_16_8' bottom: 'data' top: 'score' }
+layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-19-fused_32_16_8' bottom: 'data' top: 'score' }
 
 layer {
   name: "prob"

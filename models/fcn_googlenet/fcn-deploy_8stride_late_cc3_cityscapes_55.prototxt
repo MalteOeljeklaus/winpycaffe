@@ -2299,7 +2299,7 @@ layer {
   name: "output-conv-32-16-8"
   type: "Convolution"
   bottom: "smallscore-fused_32_16_8"
-  top: "smallscore-11-fused_conv_32_16_8"
+  top: "smallscore-19-fused_conv_32_16_8"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -2309,7 +2309,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 11
+    num_output: 19
     kernel_size: 3
 	pad: 1
     engine: CAFFE
@@ -2327,18 +2327,18 @@ layer {
 layer {
   name: "upsample-fused_32_16_8_constant"
   type: "Deconvolution"
-  bottom: "smallscore-11-fused_conv_32_16_8"
-  top: "bigscore-11-fused_32_16_8"
+  bottom: "smallscore-19-fused_conv_32_16_8"
+  top: "bigscore-19-fused_32_16_8"
   param {
     lr_mult: 0
     decay_mult: 0
   }
   convolution_param {
-    num_output: 11
+    num_output: 19
     bias_term: false
-    kernel_size: 13
+    kernel_size: 14
     stride: 8
   }
 }
 
-layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-11-fused_32_16_8' bottom: 'data' top: 'score' }
+layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-19-fused_32_16_8' bottom: 'data' top: 'score' }

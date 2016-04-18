@@ -70,6 +70,10 @@ def convert_fcn(original_deploy, fcn_deploy, original_params, fcn_params, origin
     global local_convert_fcn
     local_convert_fcn = inspect.currentframe().f_locals
 
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_camvid.prototxt',
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_camvid.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_camvid.caffemodel')
+            
+convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_cityscapes_55.prototxt',
             ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_camvid.caffemodel')
+            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_cityscapes_55.caffemodel')
