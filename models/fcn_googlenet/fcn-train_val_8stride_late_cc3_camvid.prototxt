@@ -2400,15 +2400,26 @@ layer {
 
 layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-11-fused_32_16_8' bottom: 'data' top: 'score' }
 
+#layer {	# traditional softmax loss layer with equal class weights
+#  name: "prob"
+#  type: "SoftmaxWithLoss"
+#  bottom: "score"
+#  bottom: "label"
+#  top: "loss"
+#  loss_param {
+#    ignore_label: 255
+#    normalize: true
+#  }
+#}
+
 layer {
   name: "prob"
-  type: "SoftmaxWithLoss"
+  type: "SoftmaxWithWeightedLoss"
   bottom: "score"
   bottom: "label"
   top: "loss"
-  loss_param {
+  softmaxloss_param {
+    weight_source: "../../models/fcn_googlenet/loss_weight_camvid.txt"
     ignore_label: 255
-    normalize: true
-    # normalize: false
   }
 }
