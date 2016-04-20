@@ -74,6 +74,14 @@ def convert_fcn(original_deploy, fcn_deploy, original_params, fcn_params, origin
 #            ['loss3/classifier'],['loss3/classifier-conv'],
 #            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_camvid.caffemodel')
             
-convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_cityscapes_55.prototxt',
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_cityscapes_55.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_cityscapes_55.caffemodel')
+
+#convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_ip2_camvid.prototxt',
+#            ['loss3/classifier'],['loss3/classifier-conv'],
+#            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_ip2_camvid.caffemodel')
+
+convert_fcn('../../models/bvlc_googlenet/deploy.prototxt','../../models/fcn_googlenet/fcn-deploy_8stride_late_cc3_ip2_cityscapes_55.prototxt',
             ['loss3/classifier'],['loss3/classifier-conv'],
-            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_cityscapes_55.caffemodel')
+            '../../models/bvlc_googlenet/bvlc_googlenet.caffemodel','../../models/fcn_googlenet/init-fcn-deploy_8stride_late_cc3_ip2_cityscapes_55.caffemodel')

@@ -1,66 +1,9 @@
 name: "FCN_GoogleNet"
-layer {
-  name: "data"
-  type: "Data"
-  top: "data"
-  include {
-    phase: TRAIN
-  }
-  transform_param {
-    mean_value: 104.00699
-    mean_value: 116.66877
-    mean_value: 122.67892
-  }
-  data_param {
-    source: "F:/CamVid/camvid_train-lmdb"
-    batch_size: 1
-    backend: LMDB
-  }
-}
-layer {
-  name: "data"
-  type: "Data"
-  top: "data"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    mean_value: 104.00699
-    mean_value: 116.66877
-    mean_value: 122.67892
-  }
-  data_param {
-    source: "F:/CamVid/camvid_test-lmdb"
-    batch_size: 1
-    backend: LMDB
-  }
-}
-layer {
-  name: "label"
-  type: "Data"
-  top: "label"
-  include {
-    phase: TRAIN
-  }
-  data_param {
-    source: "F:/CamVid/camvid_train-gt-lmdb"
-    batch_size: 1
-    backend: LMDB
-  }
-}
-layer {
-  name: "label"
-  type: "Data"
-  top: "label"
-  include {
-    phase: TEST
-  }
-  data_param {
-    source: "F:/CamVid/camvid_test-gt-lmdb"
-    batch_size: 1
-    backend: LMDB
-  }
-}
+input: "data"
+input_dim: 1
+input_dim: 3
+input_dim: 720
+input_dim: 960
 layer {
   name: "conv1/7x7_s2"
   type: "Convolution"
@@ -2381,11 +2324,61 @@ layer {
   }
 }
 
+# add inner product layer
 layer {
-  name: "upsample-fused_32_16_8_constant"
-  type: "Deconvolution"
+  name: "pool5/24x24_s16/ip"
+  type: "Pooling"
   bottom: "smallscore-11-fused_conv_32_16_8"
-  top: "bigscore-11-fused_32_16_8"
+  top: "pool5/24x24_s16/ip"
+  pooling_param {
+    pool: AVE # MAX
+    kernel_size: 16
+    stride: 16
+  }
+}
+
+layer {
+  name: "smallscore-128_ip"
+  type: "InnerProduct"
+  # learning rate and decay multipliers for the weights
+  param { lr_mult: 1 decay_mult: 1 }
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 2 decay_mult: 0 }
+  inner_product_param {
+   num_output: 528 # 6x8x11
+   weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  bottom: "pool5/24x24_s16/ip"
+  top: "smallscore-128_flat-ip"
+}
+
+layer {
+  name: "smallscore-128_ip_reshape"
+  type: "Reshape"
+  bottom: "smallscore-128_flat-ip"
+  top: "smallscore-128_reshape-ip"
+  reshape_param {
+    shape {
+      dim: -1
+      dim: 11
+      dim: 6
+      dim: 8
+    }
+  }
+}
+
+layer {
+  name: "upsample-128_ip_constant"
+  type: "Deconvolution"
+  bottom: "smallscore-128_reshape-ip"
+  top: "smallscore-8-ip"
   param {
     lr_mult: 0
     decay_mult: 0
@@ -2393,33 +2386,68 @@ layer {
   convolution_param {
     num_output: 11
     bias_term: false
-    kernel_size: 13
+	pad: 0
+    kernel_size: 15
+    stride: 15
+  }
+}
+
+layer {
+  name: "fuse-32_16_8_8ip"
+  type: "Concat"
+  bottom: "smallscore-11-fused_conv_32_16_8"
+  bottom: "smallscore-8-ip"
+  top: "smallscore-fused_32_16_8ip"
+  concat_param {
+    axis: 1
+  }
+}
+
+
+layer {
+  name: "output-conv-32-16-8-8ip"
+  type: "Convolution"
+  bottom: "smallscore-fused_32_16_8ip"
+  top: "smallscore-fused_conv_32_16_8ip"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 11
+    kernel_size: 3
+	pad: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+
+layer {
+  name: "upsample-fused_32_16_8_constant"
+  type: "Deconvolution"
+  bottom: "smallscore-fused_conv_32_16_8ip"
+  top: "bigscore-fused_32_16_8ip"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 11
+    bias_term: false
+    kernel_size: 8
     stride: 8
   }
 }
 
-layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-11-fused_32_16_8' bottom: 'data' top: 'score' }
-
-#layer {	# traditional softmax loss layer with equal class weights
-#  name: "prob"
-#  type: "SoftmaxWithLoss"
-#  bottom: "score"
-#  bottom: "label"
-#  top: "loss"
-#  loss_param {
-#    ignore_label: 255
-#    normalize: true
-#  }
-#}
-
-layer {
-  name: "prob"
-  type: "SoftmaxWithWeightedLoss"
-  bottom: "score"
-  bottom: "label"
-  top: "loss"
-  softmaxloss_param {
-    weight_source: "../../models/fcn_googlenet/loss_weight_camvid.txt"
-    ignore_label: 255
-  }
-}
+layer { type: 'Crop' name: 'crop_fused' bottom: 'bigscore-fused_32_16_8ip' bottom: 'data' top: 'score' }

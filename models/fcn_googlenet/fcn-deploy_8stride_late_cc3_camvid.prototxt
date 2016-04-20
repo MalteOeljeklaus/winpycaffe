@@ -2,8 +2,8 @@ name: "FCN_GoogleNet"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 224
-input_dim: 224
+input_dim: 720
+input_dim: 960
 layer {
   name: "conv1/7x7_s2"
   type: "Convolution"
