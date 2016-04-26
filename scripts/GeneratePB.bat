@@ -1,4 +1,4 @@
-set thirdpartyurl=https://www.dropbox.com/s/ossbf8fogis7zzl/3rdparty_caffe_07042016_win64.7z?dl=1
+set thirdpartyurl=https://www.dropbox.com/s/fy1to3zafmvr2oc/3rdparty_caffe_26042016_win64.7z?dl=1
 
 if exist ".\3rdparty" (
 	echo found 3rdparty dependencies, all good!
