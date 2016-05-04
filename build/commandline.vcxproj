@@ -73,7 +73,7 @@ copy ..\3rdparty\bin\*.dll ..\bin\
     </CudaCompile>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CodeGeneration>compute_20,sm_20;compute_30,sm_30;compute_35,sm_35;compute_50,sm_50;</CodeGeneration>
+      <CodeGeneration>compute_20,sm_20;compute_30,sm_30;compute_32,sm_32;compute_35,sm_35;compute_50,sm_50;</CodeGeneration>
     </CudaCompile>
     <PreBuildEvent>
       <Command>set origin_dir=%cd%
@@ -132,6 +132,7 @@ cd %origin_dir%</Command>
     <ClCompile Include="..\src\caffe\layers\log_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\loss_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\lrn_layer.cpp" />
+    <ClCompile Include="..\src\caffe\layers\masking_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\memory_data_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\multinomial_logistic_loss_layer.cpp" />
     <ClCompile Include="..\src\caffe\layers\mvn_layer.cpp" />
@@ -230,6 +231,7 @@ cd %origin_dir%</Command>
     <CudaCompile Include="..\src\caffe\layers\lrn_layer.cu">
       <FileType>CudaCompile</FileType>
     </CudaCompile>
+    <CudaCompile Include="..\src\caffe\layers\masking_layer.cu" />
     <CudaCompile Include="..\src\caffe\layers\mvn_layer.cu" />
     <CudaCompile Include="..\src\caffe\layers\pooling_layer.cu">
       <FileType>CudaCompile</FileType>
