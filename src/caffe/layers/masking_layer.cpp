@@ -94,12 +94,12 @@ namespace caffe {
 			if (propagate_down[0]) {
 				// Gradient with respect to bottom data
 				caffe_div(top[0]->count(), top[0]->cpu_data(), bottom[0]->cpu_data(), bottom[0]->mutable_cpu_diff());
-				caffe_mul(top[0]->count(), bottom[0]->mutable_cpu_diff(), top[0]->cpu_diff(), bottom[0]->mutable_cpu_diff());
+				caffe_mul(top[0]->count(), bottom[0]->cpu_diff(), top[0]->cpu_diff(), bottom[0]->mutable_cpu_diff());
 			}
 
 			// Gradient with respect to weights
 			caffe_div(top[0]->count(), top[0]->cpu_data(), blobs_[0]->cpu_data(), this->blobs_[0]->mutable_cpu_diff());
-			caffe_mul(top[0]->count(), this->blobs_[0]->mutable_cpu_diff(), top[0]->cpu_diff(), this->blobs_[0]->mutable_cpu_diff());
+			caffe_mul(top[0]->count(), this->blobs_[0]->cpu_diff(), top[0]->cpu_diff(), this->blobs_[0]->mutable_cpu_diff());
 
 			// Gradient with respect to bias
 			if (bias_term_) {
