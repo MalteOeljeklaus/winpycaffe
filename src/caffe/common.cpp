@@ -52,7 +52,10 @@ void GlobalInit(int* pargc, char*** pargv) {
   // Provide a backtrace on segfault.
 #ifndef _MSC_VER
   ::google::InstallFailureSignalHandler();
+#else
+  LOG(INFO) << "winpycaffe compiled at " __DATE__ " " __TIME__ ".";
 #endif
+
 }
 
 #ifdef CPU_ONLY  // CPU-only Caffe.
