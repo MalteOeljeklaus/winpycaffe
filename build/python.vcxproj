@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../3rdparty/include;../3rdparty/include/cuda;../src;../src/include;../include;../3rdparty/include/hdf5-1.8.15-win64-vs2013-shared;../3rdparty/include/pthread;../3rdparty/include/liblmdb;../3rdparty/include/openblas;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include;C:\Python27\include;C:\Python27\lib\site-packages\numpy\core\include;..\include;..\3rdparty\include;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../3rdparty/include;../3rdparty/include/cuda;../src;../src/include;../include;../3rdparty/include/hdf5-1.8.15-win64-vs2013-shared;../3rdparty/include/pthread;../3rdparty/include/liblmdb;../3rdparty/include/openblas;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include;C:\tools\python2\include;C:\tools\python2\lib\site-packages\numpy\core\include;..\include;..\3rdparty\include;%CUDA_PATH%\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -88,7 +88,7 @@ cd %origin_dir%</Command>
     <Link>
       <AdditionalOptions> /machine:x64 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>python27.lib;libwincaffe_misc.lib;lmdb.lib;gflags.lib;hdf5.lib;hdf5_cpp.lib;hdf5_f90cstub.lib;hdf5_fortran.lib;hdf5_hl.lib;hdf5_hl_cpp.lib;hdf5_hl_f90cstub.lib;hdf5_hl_fortran.lib;hdf5_tools.lib;libpthread.lib;opencv_core248.lib;opencv_highgui248.lib;opencv_imgproc248.lib;opencv_legacy248.lib;opencv_objdetect248.lib;libboost_date_time-vc120-mt-s-1_60.lib;boost_system-vc120-mt-1_60.lib;boost_python-vc120-mt-1_60.lib;shlwapi.lib;leveldb.lib;libopenblas.lib;cudnn.lib;cublas.lib;cublas_device.lib;curand.lib;cudart.lib;cuda.lib;libprotobuf.lib;libglog.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\3rdparty\lib;%CUDA_PATH%\lib\x64;C:\Python27\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\3rdparty\lib;%CUDA_PATH%\lib\x64;C:\tools\python2\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>./MSVCpy/Release/_caffe.lib</ImportLibrary>
