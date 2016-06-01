@@ -19,22 +19,28 @@ namespace caffe {
 		// TODO: check gradient formulas (http://ufldl.stanford.edu/tutorial/supervised/MultiLayerNeuralNetworks/)
 
 		if (stable_prod_grad_) {
+			LOG(INFO) << "top[0]->count()=" << std::to_string(top[0]->count()) << ", propagate_down[0]=" << std::to_string(propagate_down[0]) << ", bottom[0]->mutable_gpu_diff()=" << std::to_string((unsigned int)(bottom[0]->mutable_gpu_diff())) << ", top[0]->gpu_diff()=" << std::to_string((unsigned int)(top[0]->gpu_diff()));
 			if (propagate_down[0]) {
 				// Gradient with respect to bottom data
 				caffe_gpu_mul(top[0]->count(), this->blobs_[0]->gpu_data(), top[0]->gpu_diff(), bottom[0]->mutable_gpu_diff()); // d_i = d_(i+1) .* w
 			}
 
 			// Gradient with respect to weights
+			LOG(INFO) << "top[0]->count()=" << std::to_string(top[0]->count()) << ", propagate_down[1]=" << std::to_string(propagate_down[1]) << ", blobs_[0]->mutable_gpu_diff()=" << std::to_string((unsigned int)(blobs_[0]->mutable_gpu_diff())) << ", top[0]->gpu_diff()=" << std::to_string((unsigned int)(top[0]->gpu_diff()));
 			caffe_gpu_mul(top[0]->count(), bottom[0]->gpu_data(), top[0]->gpu_diff(), this->blobs_[0]->mutable_gpu_diff()); // d_i = d_(i+1) .* in
+//			caffe_copy(top[0]->count(), top[0]->gpu_diff(), this->blobs_[0]->mutable_gpu_diff()); // d_i = d_(i+1)
 
 			// Gradient with respect to bias
 			if (bias_term_) {
-				LOG(ERROR) << "bias gradient not yet implemented"; // TODO: see elementwise layer for inspiration
-				//caffe_copy(top[0]->count(), top[0]->cpu_diff(), this->blobs_[1]->mutable_cpu_diff()); // = d_i+1
+				// LOG(ERROR) << "bias gradient not yet implemented"; // TODO: see elementwise layer for inspiration
+				LOG(INFO) << "top[0]->count()=" << std::to_string(top[0]->count()) << ", propagate_down[2]=" << std::to_string(propagate_down[2]) << ", blobs_[1]->mutable_gpu_diff()=" << std::to_string((unsigned int)(blobs_[1]->mutable_gpu_diff())) << ", top[0]->gpu_diff()=" << std::to_string((unsigned int)(top[0]->gpu_diff()));
+				caffe_copy(top[0]->count(), top[0]->gpu_diff(), this->blobs_[1]->mutable_gpu_diff()); // d_i = d_(i+1)
+//				caffe_copy(this->blobs_[1]->count(), this->blobs_[1]->gpu_data(), this->blobs_[0]->mutable_gpu_data());
 			}
 		}
 		else {
 			// less stable gradient computation method inspired by elementwise layer, this is just for comparison/debugging purposes
+			// TODO: this is erroneous if bias is used
 
 			if (propagate_down[0]) {
 				// Gradient with respect to bottom data
@@ -48,7 +54,8 @@ namespace caffe {
 
 			// Gradient with respect to bias
 			if (bias_term_) {
-				LOG(ERROR) << "unstable bias gradient not yet implemented"; // TODO: see elementwise layer for formulas
+				// LOG(ERROR) << "unstable bias gradient not yet implemented"; // TODO: see elementwise layer for formulas
+				caffe_copy(top[0]->count(), top[0]->cpu_diff(), this->blobs_[1]->mutable_cpu_diff()); // d_i = d_(i+1)
 			}
 		}
 	}
