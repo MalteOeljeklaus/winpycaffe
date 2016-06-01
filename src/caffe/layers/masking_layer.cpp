@@ -10,7 +10,7 @@ namespace caffe {
 	template <typename Dtype>
 	void MaskingLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
 		const vector<Blob<Dtype>*>& top) {
-		bias_term_ = true; // TODO: read from proto
+		bias_term_ = this->layer_param_.masking_param().bias_term();
 
 		if (this->blobs_.size() > 0) {
 			LOG(INFO) << "Skipping parameter initialization";
@@ -28,28 +28,14 @@ namespace caffe {
 			this->blobs_[0].reset(new Blob<Dtype>(bottom[0]->shape()));
 
 			if (bias_term_) {
-				FillerParameter bias_filler_param;	// TODO: read this from prototxt
-				bias_filler_param.set_type("constant");
-				bias_filler_param.set_value(0.0);
-				//bias_filler_param.set_type("gaussian");
-				//bias_filler_param.set_mean(0.0);
-				//bias_filler_param.set_std(0.0005);
-				shared_ptr<Filler<Dtype> > bias_filler(GetFiller<Dtype>(bias_filler_param));
+				shared_ptr<Filler<Dtype> > bias_filler(GetFiller<Dtype>(this->layer_param_.masking_param().bias_filler()));
 				bias_filler->Fill(this->blobs_[1].get());
 			}
-
-			FillerParameter weight_filler_param;	// TODO: read this from prototxt
-			weight_filler_param.set_type("constant");
-			weight_filler_param.set_value(1.0);
-			//weight_filler_param.set_type("gaussian");
-			//weight_filler_param.set_mean(1.0);
-			//weight_filler_param.set_std(0.0005);
-
-			shared_ptr<Filler<Dtype> > weight_filler(GetFiller<Dtype>(weight_filler_param));
+			shared_ptr<Filler<Dtype> > weight_filler(GetFiller<Dtype>(this->layer_param_.masking_param().weight_filler()));
 			weight_filler->Fill(this->blobs_[0].get());
 		}
 
-		stable_prod_grad_ = true; // TODO: read this from proto = this->layer_param_.masking_param().stable_prod_grad();
+		stable_prod_grad_ = this->layer_param_.masking_param().stable_prod_grad();
 	}
 
 	template <typename Dtype>
@@ -88,16 +74,14 @@ namespace caffe {
 
 			// Gradient with respect to weights
 			caffe_mul(top[0]->count(), bottom[0]->cpu_data(), top[0]->cpu_diff(), this->blobs_[0]->mutable_cpu_diff()); // d_i = d_(i+1) .* in
-//			caffe_copy(top[0]->count(), top[0]->cpu_diff(), this->blobs_[0]->mutable_cpu_diff()); // d_i = d_(i+1)
 
 			// Gradient with respect to bias
 			if (bias_term_) {
-				//LOG(ERROR) << "bias gradient not yet implemented"; // TODO: see elementwise layer for inspiration
+				// TODO: check whether there are any smart pointer tricks which can replace the copying overhead
 				caffe_copy(top[0]->count(), top[0]->cpu_diff(), this->blobs_[1]->mutable_cpu_diff()); // d_i = d_(i+1)
 			}
 		} else {
 			// less stable gradient computation method inspired by elementwise layer, this is just for comparison/debugging purposes
-			// TODO: this is erroneous if bias is used
 
 			if (propagate_down[0]) {
 				// Gradient with respect to bottom data
@@ -111,7 +95,6 @@ namespace caffe {
 
 			// Gradient with respect to bias
 			if (bias_term_) {
-				//LOG(ERROR) << "unstable bias gradient not yet implemented"; // TODO: see elementwise layer for formulas
 				caffe_copy(top[0]->count(), top[0]->cpu_diff(), this->blobs_[1]->mutable_cpu_diff()); // d_i = d_(i+1)
 			}
 		}
