@@ -65,6 +65,12 @@ inputs = [inputs[i] for i in ridx]
 #inputs = inputs[1:10]
 f.close()
 
+f = open('D:\\cityscapes\\listings\\scalar_labels_train.txt','r')
+scalar_label = f.read().splitlines()
+scalar_label = [scalar_label[i] for i in ridx]
+#inputs = inputs[1:10]
+f.close()
+
 # load first image to determine database size
 im = Image.open(inputs[0]) # load image
 im = im.resize((int(im.size[0]*scale_factor),int(im.size[1]*scale_factor)),Image.NEAREST) # downsize for reduced memory usage
@@ -91,9 +97,11 @@ with in_db.begin(write=True) as in_txn:
             tmp[tmp[:,:,0]==i] = labels[i].trainId
         # - in Channel x Height x Width order (switch from H x W x C)
         tmp = tmp.transpose((2,0,1))
-        im_dat = caffe.io.array_to_datum(tmp)
+        im_dat = caffe.io.array_to_datum(tmp,int(scalar_label[in_idx]))
         in_txn.put('{:0>10d}'.format(in_idx), im_dat.SerializeToString())
 in_db.close()
+
+np.save(output_dir+'\ridx_train.npy',ridx)
 
 print ' cityscapes train gt done'
 
@@ -140,6 +148,13 @@ inputs = [inputs[i] for i in ridx]
 #inputs = inputs[1:10]
 f.close()
 
+f = open('D:\\cityscapes\\listings\\scalar_labels_val.txt','r')
+scalar_label = f.read().splitlines()
+scalar_label = [scalar_label[i] for i in ridx]
+#inputs = inputs[1:10]
+f.close()
+
+
 # load first image to determine database size
 im = Image.open(inputs[0]) # load image
 im = im.resize((int(im.size[0]*scale_factor),int(im.size[1]*scale_factor)),Image.NEAREST) # downsize for reduced memory usage
@@ -166,8 +181,10 @@ with in_db.begin(write=True) as in_txn:
             tmp[tmp[:,:,0]==i] = labels[i].trainId
         # - in Channel x Height x Width order (switch from H x W x C)
         tmp = tmp.transpose((2,0,1))
-        im_dat = caffe.io.array_to_datum(tmp)
+        im_dat = caffe.io.array_to_datum(tmp,int(scalar_label[in_idx]))
         in_txn.put('{:0>10d}'.format(in_idx), im_dat.SerializeToString())
 in_db.close()
+
+np.save(output_dir+'\ridx_val.npy',ridx)
 
 print ' cityscapes val gt done'
