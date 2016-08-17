@@ -43,7 +43,7 @@ namespace caffe {
 			}
 
 			// Gradient with respect to weights
-			caffe_gpu_div(top[0]->count(), top[0]->gpu_data(), blobs_[0]->gpu_data(), this->blobs_[0]->mutable_gpu_diff());
+			caffe_gpu_div(top[0]->count(), top[0]->gpu_data(), this->blobs_[0]->gpu_data(), this->blobs_[0]->mutable_gpu_diff());
 			caffe_gpu_mul(top[0]->count(), this->blobs_[0]->gpu_diff(), top[0]->gpu_diff(), this->blobs_[0]->mutable_gpu_diff());
 
 			// Gradient with respect to bias
