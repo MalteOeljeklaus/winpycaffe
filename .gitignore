@@ -79,6 +79,8 @@ distribute/*
 *.testbin
 *.bin
 python/caffe/proto/
+python/caffe/_caffe.pyd
+libraries
 cmake_build
 .cmake_build
 
